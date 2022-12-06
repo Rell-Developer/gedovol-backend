@@ -1,6 +1,7 @@
 // Importaciones
 import express from "express";
 import cors from 'cors';
+import dotenv from 'dotenv';
 
 // Conexion con la BD
 import conectarDB from "./config/db.js";
@@ -11,9 +12,13 @@ import usuarioRoutes from './routes/usuarioRoutes.js';
 // Instancia de Express
 const app = express();
 
+// Inicio de la configuracion del dotenv
+dotenv.config();
+
 // Uso del express json
 app.use(express.json());
 
+// Uso de los cors
 app.use(cors());
 
 // Uso del routing principal

@@ -8,6 +8,9 @@ import {
     obtenerUsuarios
 } from '../controllers/usuarioController.js';
 
+// Middlewares
+import checkAuth from "../middleware/outMiddleware.js";
+
 // Inicio del enrutado
 const router = express.Router();
 
