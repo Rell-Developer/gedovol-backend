@@ -5,7 +5,8 @@ import express from "express";
 import {
     unUsuario,
     registrarUsuario,
-    obtenerUsuarios
+    obtenerUsuarios,
+    cambiarPassword
 } from '../controllers/usuarioController.js';
 
 // Middlewares
@@ -15,7 +16,11 @@ import checkAuth from "../middleware/outMiddleware.js";
 const router = express.Router();
 
 // ============ Area Publica ============
+// ======== POST ========
 router.post('/login', unUsuario); //Login
+
+// ======== PUT ========
+router.put('/cambiar-password', cambiarPassword); //Cambiar Contraseña para Confirmarla
 
 // ============ Area Privada ============
 // ======== GET ========

@@ -6,6 +6,7 @@ import Usuario from '../models/Usuario.js';
 import generarID from '../helpers/generarID.js';
 import generarJWT from '../helpers/generarJWT.js';
 import { hashearPassword, comprobarPassword } from '../helpers/hashearPasswords.js';
+import enviarCorreo from '../helpers/enviarCorreo.js';
 
 // ====== Metodos del CRUD ======
 // ====== GET ======
@@ -37,6 +38,8 @@ const unUsuario = async(req,res) => {
 
     // Destructuring
     const {usuario, password} = req.body;
+    console.log(usuario)
+    console.log(password)
 
     try {
         // Variables a Utilizar
@@ -50,6 +53,9 @@ const unUsuario = async(req,res) => {
             userObj.usuario = 'Administrador';
             userObj.rol = 'administrador';
             userObj.token = generarJWT(0);
+
+            // Retornando el resultado al frontend
+            return res.json(userObj);
         }else{
 
             //Busqueda en la base de datos de los usuarios
@@ -107,7 +113,7 @@ const unUsuario = async(req,res) => {
 const registrarUsuario = async(req, res) => {
 
     // Destructuring
-    let {usuario, password, cedula, rol} = req.body;
+    let {usuario, password, cedula, rol, correo} = req.body;
 
     try {
         
@@ -122,6 +128,12 @@ const registrarUsuario = async(req, res) => {
         usuarios.forEach( usuario => {
             if(usuario['dataValues'].cedula === cedula){
                 usuarioEncontrado = true;
+                dataObj.message = 'Esta cédula ya está registrada con un usuario';
+            }
+
+            if(usuario['dataValues'].correo === correo){
+                usuarioEncontrado = true;
+                dataObj.message = 'Este correo electronico ya está registrado con un usuario';
             }
         });
 
@@ -135,35 +147,80 @@ const registrarUsuario = async(req, res) => {
             }
 
             // Colocando la hora de creacion y actualizacion
-            req.body.createdAt = new Date().toLocaleDateString();
-            req.body.updatedAt = new Date().toLocaleDateString();
+            req.body.createdAt = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`;
+            req.body.updatedAt = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`;
 
             // Hasheando la contraseña del usuario
             password = await hashearPassword(password, undefined);
+
+            // Se genera el token 
+            let token = await generarJWT(cedula);
             
             // Peticion de guardado en la base de datos
-            await Usuario.create({
-                id: req.body.id,
-                usuario,
-                cedula,
-                password,
-                rol,
-                createdAt: req.body.updatedAt,
-                updatedAt: req.body.updatedAt
-            });
+            // await Usuario.create({
+            //     id: req.body.id,
+            //     usuario,
+            //     cedula,
+            //     password,
+            //     rol,
+            //     token,
+            //     createdAt: req.body.updatedAt,
+            //     updatedAt: req.body.updatedAt,
+            //     correo,
+            // });
+
+            await enviarCorreo({nombre:usuario, email: correo, token}, 'Creacion de Cuenta', 'Confirma tu Cuenta');
 
             // Creando mensaje que se retornará
             dataObj.message = 'Usuario creado correctamente.';
         }else{
             dataObj.error = true;
-            dataObj.message = 'Esta cédula ya está registrada con un usuario';
         }
 
         // Retorno de los datos del usuario al frontend
         res.json(dataObj);
     } catch (error) {
+        console.log(error.message);
         // Retorna un error en caso de que lo haya
         res.json({error:true, message: error.message});
+    }
+}
+
+// ====== PUT ======
+const cambiarPassword = async(req, res) =>{
+
+    // Destructuring
+    const {password, token} = req.body;
+
+    try {
+
+        let objInfo = {};
+
+        // Query
+        const usuario = await Usuario.findOne({ where: { token }});
+
+        // Si no encuentra el usuario
+        if(!usuario){
+            objInfo.message = 'No se ha encontrado el usuario';
+            objInfo.error = true;
+        }else{
+
+            // Hasheando la contraseña
+            password = await hashearPassword(password, undefined);
+
+            // Actualizando la contraseña
+            await usuario.update({password});
+
+            // Mensaje de Proceso Realizado con éxito
+            objInfo.message = 'Contraseña Actualizada Correctamente';
+            console.log('Contraseña actualizada correctamente')
+        }
+
+        // Retornando al frontend
+        res.json(objInfo);
+    } catch (error) {
+        console.log(error.message)
+        res.json({message: error.message, error:true});
     }
 }
 
@@ -171,5 +228,6 @@ const registrarUsuario = async(req, res) => {
 export{
     unUsuario,
     registrarUsuario,
-    obtenerUsuarios
+    obtenerUsuarios,
+    cambiarPassword
 }
