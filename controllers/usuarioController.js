@@ -37,6 +37,8 @@ const unUsuario = async(req,res) => {
 
     // Destructuring
     const {usuario, password} = req.body;
+    console.log(usuario);
+    console.log(password);
 
     try {
         // Variables a Utilizar
@@ -50,15 +52,19 @@ const unUsuario = async(req,res) => {
             userObj.usuario = 'Administrador';
             userObj.rol = 'administrador';
             userObj.token = generarJWT(0);
+            
+            // Retornando el resultado al frontend
+            return res.json(userObj);
         }else{
 
             //Busqueda en la base de datos de los usuarios
             usuarios = await Usuario.findAll();
 
+            
             //Si hay usuarios registrados
             if(usuarios.length > 0){
-
-                //Recorrido por el array
+                
+                //Recorrido por el array 
                 usuarios.forEach( async(usuarioData) => {
 
                     // Validacion si el usuario es correcto
@@ -97,9 +103,10 @@ const unUsuario = async(req,res) => {
                 return res.json(userObj);
             }
         }
-    } catch (error) {
+    } catch (e) {
+        console.log(e.message)
         // retornando el mensaje de error
-        res.json({msg: error.message});
+        res.json({msg: e.message, error: true});
     }
 }
 
