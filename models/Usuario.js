@@ -10,6 +10,9 @@ const Usuario = conectarDB.define('usuarios', {
     cedula:{
         type: DataTypes.STRING,
     },
+    correo:{
+        type: DataTypes.STRING,
+    },
     password:{
         type: DataTypes.TEXT,
     },
@@ -21,6 +24,7 @@ const Usuario = conectarDB.define('usuarios', {
     },
     confirmado: {
         type: DataTypes.BOOLEAN,
+        default: false,
     },
     createdAt:{
         type: DataTypes.DATE,
