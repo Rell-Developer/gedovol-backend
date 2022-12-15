@@ -8,6 +8,7 @@ import conectarDB from "./config/db.js";
 
 // Routes
 import usuarioRoutes from './routes/usuarioRoutes.js';
+import donanteRoutes from './routes/donanteRoutes.js';
 
 // Instancia de Express
 const app = express();
@@ -31,6 +32,7 @@ app.use(cors());
 
 // Uso del Enrutado
 app.use('/api/usuario', usuarioRoutes);
+app.use('/api/donante', donanteRoutes);
 
 
 // Verificacion si se conecto con la base de datos
