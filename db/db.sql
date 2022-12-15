@@ -23,7 +23,7 @@ create table `donantes`(
     `nombre` VARCHAR(100),
     `apellido` VARCHAR(100),
     `cedula` VARCHAR(150),
-    `telefono` INT(12)
+    `telefono` INT(12),
     `sexo` BOOLEAN,
     `correo` VARCHAR(100),
     `direccion` LONGTEXT,
@@ -31,7 +31,7 @@ create table `donantes`(
     `ultima_donacion` DATE,
     `ultimo_tatuaje` DATE,
     `enfermedad` VARCHAR(150),
-    `estado` BOOLEAN,
+    `estatus` BOOLEAN,
     `pregunta1` BOOLEAN, 
     `pregunta2` BOOLEAN, 
     `pregunta3` BOOLEAN, 
@@ -52,6 +52,6 @@ create table `donantes`(
     `pregunta18` BOOLEAN, 
     `pregunta19` BOOLEAN, 
     `pregunta20` BOOLEAN, 
-    `pregunta21` BOOLEAN, 
+    `pregunta21` BOOLEAN 
 
 );

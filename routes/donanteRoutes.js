@@ -5,6 +5,7 @@ import express from "express";
 import {
     registrarDonante,
     obtenerDonantes,
+    modificarDonante
 } from '../controllers/donanteController.js';
 
 // Middlewares
@@ -18,6 +19,9 @@ router.get('/obtener-donantes', obtenerDonantes);
 
 // ======== POST ========
 router.post('/registrar-donante', registrarDonante);
+
+// ======== PUT ========
+router.put('/modificar-donante', modificarDonante);
 
 // Exportar enrutador
 export default router;
