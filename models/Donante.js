@@ -34,7 +34,7 @@ const Donante = conectarDB.define('donantes', {
     enfermedad:{
         type: DataTypes.STRING,
     },
-    estado: {
+    estatus: {
         type: DataTypes.BOOLEAN,
         default: false,
     },
