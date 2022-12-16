@@ -43,7 +43,8 @@ const eliminarDonante = async(req, res) => {
         //Query
         Donante.destroy({ where: { id }});
     
-    res.json({msg: "eliminado"});
+        // Retorno al frontend de los datos de los donantes
+        res.json({msg: "eliminado"});
     }catch (error) {
         // retornando el mensaje de error
         res.json({msg: error.message, error:true});
