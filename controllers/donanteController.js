@@ -32,6 +32,26 @@ const obtenerDonantes = async(req,res) =>{
     
 }
 
+// ====== GET ======
+//Eliminar un donante
+const eliminarDonante = async(req, res) => {
+    // Destructuring
+    const {id} = req.params;
+    
+    try{
+
+        //Query
+        Donante.destroy({ where: { id }});
+    
+    res.json({msg: "eliminado"});
+    }catch (error) {
+        // retornando el mensaje de error
+        res.json({msg: error.message, error:true});
+    }
+    
+
+}
+
 // ====== POST ======
 
 
@@ -228,6 +248,7 @@ const modificarDonante = async(req, res) =>{
 // Exportar Metodos
 export{
     registrarDonante,
+    eliminarDonante,
     obtenerDonantes,
     modificarDonante
     

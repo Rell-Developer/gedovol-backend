@@ -5,6 +5,7 @@ import express from "express";
 import {
     registrarDonante,
     obtenerDonantes,
+    eliminarDonante,
     modificarDonante
 } from '../controllers/donanteController.js';
 
@@ -16,6 +17,9 @@ const router = express.Router();
 
 // ======== GET ========
 router.get('/obtener-donantes', obtenerDonantes);
+
+// ======== DELETE ========
+router.delete('/eliminar-donantes/:id', eliminarDonante);
 
 // ======== POST ========
 router.post('/registrar-donante', registrarDonante);

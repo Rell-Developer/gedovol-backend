@@ -52,6 +52,8 @@ create table `donantes`(
     `pregunta18` BOOLEAN, 
     `pregunta19` BOOLEAN, 
     `pregunta20` BOOLEAN, 
-    `pregunta21` BOOLEAN 
+    `pregunta21` BOOLEAN,
+    `createdAt` DATE, 
+    `updatedAt` DATE
 
 );

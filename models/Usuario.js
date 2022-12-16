@@ -31,7 +31,7 @@ const Usuario = conectarDB.define('usuarios', {
     },
     updatedAt: {
         type: DataTypes.DATE,
-    },
+    }
 });
 
 // Exportando el modelo
