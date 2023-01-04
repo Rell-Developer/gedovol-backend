@@ -1,6 +1,10 @@
 // Importar Archivos necesarios
+// Librerias
+import {Op} from 'sequelize';
+
 // Modelos
 import Usuario from '../models/Usuario.js';
+import Notificacion from '../models/Notificacion.js';
 
 // Helpers
 import generarID from '../helpers/generarID.js';
@@ -29,6 +33,42 @@ const obtenerUsuarios = async(req,res) =>{
     } catch (error) {
         // retornando el mensaje de error
         res.json({msg: error.message, error:true});
+    }
+}
+
+const buscarPerfil = async(req,res) =>{
+
+    // Destructuring
+    const {id} = req.params;
+
+    try {
+        
+        // Objeto de informacion
+        let objInfo = {}
+
+        // Busqueda por identificador
+        let resultado = await Usuario.findOne({ where: { id }});
+
+        // verificando si rajo datos
+        if(resultado){
+            // creacion de las propiedades del objeto con la informacion del usuario
+            objInfo.usuario = resultado['dataValues'].usuario;
+            objInfo.cedula = resultado['dataValues'].cedula;
+            objInfo.correo = resultado['dataValues'].correo;
+            objInfo.rol = resultado['dataValues'].rol;
+            objInfo.confirmado = resultado['dataValues'].confirmado;
+        }else{
+            // Creacion del error a retornar
+            objInfo.error = true;
+            objInfo.message = 'No se ha encontrado al usuario';
+        }
+
+        // Retorno del frontend
+        res.json(objInfo);
+    } catch (error) {
+        console.log('hubo un error');
+        console.log(error.message)
+        res.json({error: true, message:error.message})
     }
 }
 
@@ -119,6 +159,7 @@ const unUsuario = async(req,res) => {
                             userObj.usuario = usuarioData['dataValues'].usuario;
                             userObj.rol = usuarioData['dataValues'].rol;
                             userObj.confirmado = usuarioData['dataValues'].confirmado;
+                            userObj.token = generarJWT(0);
 
                             // Retornando el resultado al frontend
                             return res.json(userObj);
@@ -153,7 +194,7 @@ const unUsuario = async(req,res) => {
 const registrarUsuario = async(req, res) => {
 
     // Destructuring
-    let {usuario, password, cedula, rol, correo} = req.body;
+    let {usuario, password, cedula, rol, correo, usuario_id} = req.body;
 
     try {
         
@@ -229,6 +270,14 @@ const registrarUsuario = async(req, res) => {
 
             // Creando mensaje que se retornará
             dataObj.message = 'Usuario creado correctamente.';
+
+            await crearNotificacion(
+                {usuario, cedula, rol}, 
+                false, 
+                'creacion-usuario', 
+                usuario_id, 
+                req.body.createdAt
+            );
         }else{
             dataObj.error = true;
         }
@@ -242,8 +291,89 @@ const registrarUsuario = async(req, res) => {
     }
 }
 
+// Creacion de la notificacion
+const crearNotificacion = async(usuario_asociado, leido, tipo_id, usuario_id, fecha) => {
+
+    try {
+        // Variables y objetos
+        let notificacion = {};
+        
+        console.log(tipo_id)
+        // Buscando al usuario responsable
+        let usuario_responsable = await Usuario.findOne({ where: { id: usuario_id }});
+
+        /*
+            Los Tipos de mensajes son los siguientes
+            1: creacion-usuario
+            2: confirmacion-usuario
+            3: eliminacion-usuario
+            4: creacion-donante
+            5: eliminacion-donante
+        */
+
+        // Estableciendo id segun el tipo de notificacion
+        if(tipo_id === 'creacion-usuario'){
+            notificacion.tipo_id = 1;
+                
+            // Si lo encuentra
+            if(usuario_responsable){
+                notificacion.descripcion = `${usuario_responsable['dataValues'].usuario} (V-${usuario_responsable['dataValues'].cedula}) ha creado un nuevo usuario, ${usuario_asociado.usuario} (V-${usuario_asociado.cedula}), con rol como ${usuario_asociado.rol}.`
+            }
+        }else if(tipo_id === 'confirmacion-usuario'){
+            notificacion.tipo_id = 2;
+
+            // Si lo encuentra
+            if(usuario_responsable){
+                notificacion.descripcion = `${usuario_responsable['dataValues'].usuario} (V-${usuario_responsable['dataValues'].cedula}) ha confirmado su cuenta con rol ${usuario_responsable['dataValues'].rol}.`
+            }
+        }else if(tipo_id === 'eliminacion-usuario'){
+            notificacion.tipo_id = 3
+
+            notificacion.descripcion = `${usuario_responsable['dataValues'].usuario} (V-${usuario_responsable['dataValues'].cedula}) ha eliminado a un usuario: ${usuario_asociado.usuario} (V-${usuario_asociado.cedula}), con rol como ${usuario_asociado.rol}.`
+        }else if(tipo_id === 'creacion-donante'){
+            notificacion.tipo_id = 4
+
+            notificacion.descripcion = `${usuario_responsable['dataValues'].usuario} (V-${usuario_responsable['dataValues'].cedula}) ha registrado a un nuevo donante, ${usuario_asociado.usuario} (V-${usuario_asociado.cedula}), tipo de sangre: ${usuario_asociado.tipo_sangre}.`
+        }else if(tipo_id === 'eliminacion-donante'){
+            notificacion.tipo_id = 5
+    
+            notificacion.descripcion = `${usuario_responsable['dataValues'].usuario} (V-${usuario_responsable['dataValues'].cedula}) ha eliminado a un donante: ${usuario_asociado.usuario} (V-${usuario_asociado.cedula}), tipo de sangre: ${usuario_asociado.tipo_sangre}.`
+        }
+
+
+        // Estableciendo la fecha
+        if(fecha != null){
+            notificacion.fecha = fecha;
+            notificacion.createdAt = fecha;
+            notificacion.updatedAt = fecha;
+        }else{
+            notificacion.fecha = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`;
+            notificacion.createdAt = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`;
+            notificacion.updatedAt = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`;
+        }
+        
+        notificacion.leido = leido;
+
+        // Estableciendo el identificador del usuario responsable
+        notificacion.usuario_id = usuario_id;
+
+
+
+        
+        console.log(notificacion);
+
+        // Guardado de la notificacion
+        await Notificacion.create(notificacion);
+        console.log('Notificacion guardada exitosamente')
+
+    } catch (error) {
+        console.log('Hubo un error al crear la notificacion');
+        console.log(error.message)
+    }
+}
+
 // ====== PUT ======
-const cambiarPassword = async(req, res) =>{
+const resetearPassword = async(req, res) =>{
 
     // Destructuring
     let {password, token} = req.body;
@@ -269,7 +399,10 @@ const cambiarPassword = async(req, res) =>{
 
             // Mensaje de Proceso Realizado con éxito
             objInfo.message = 'Contraseña Actualizada Correctamente';
-            console.log('Contraseña actualizada correctamente')
+            console.log('Contraseña actualizada correctamente');
+
+            // Creacion de la notificacion de cuenta confirmada
+            crearNotificacion(null, false, 'confirmacion-usuario', usuario['dataValues'].id, null);
         }
 
         // Retornando al frontend
@@ -280,11 +413,179 @@ const cambiarPassword = async(req, res) =>{
     }
 }
 
+// Funcion para que los administradores puedan editar los datos de los usuarios
+const actualizarUsuario = async(req, res) => {
+
+    // Destructuring
+    const {usuario, cedula, correo, clave, rol, id} = req.body;
+    console.log('Actualizando los datos del usuario')
+    console.log(req.body);
+
+    try {
+        
+        // Variables
+        let objInfo = {};
+        let usuarioEncontrado = false;
+
+        // Peticion a la base de datos para si la cedula ya está registrada
+        let usuarios = await Usuario.findAll();
+        let usuarioActualizar = await Usuario.findOne({ where: { id } });
+
+        // Busca si la cedula ya está registrada con otro usuario
+        usuarios.forEach( usuario => {
+
+            if(usuarioActualizar['dataValues'].cedula !== cedula){
+                if(usuario['dataValues'].cedula === cedula){
+                    usuarioEncontrado = true;
+                    objInfo.message = 'Esta cédula ya está registrada con un usuario';
+                    objInfo.error = true;
+                }
+            }
+
+            if(usuarioActualizar['dataValues'].correo !== correo){
+                if(usuario['dataValues'].correo === correo){
+                    usuarioEncontrado = true;
+                    objInfo.message = 'Este correo electronico ya está registrado con un usuario';
+                    objInfo.error = true;
+                }
+            }
+        });
+
+        console.log('Evaluar')
+
+        if(!usuarioEncontrado){
+            console.log('No se encontro usuario asi que a actualizar')
+
+            // Configurando la fecha de actualizacion
+            let updatedAt = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`;
+            console.log('Fecha de actualizacion')
+            console.log(updatedAt)
+
+            // Actualizacion de los datos del usuario
+            await usuarioActualizar.update({ usuario, correo, cedula, rol, updatedAt });
+
+            // Creacion del mensaje de exito
+            objInfo.message = 'Datos Actualizados correctamente';
+            console.log('Datos actualizados correctamente')
+        }
+
+        // Retornando el valor a frontend
+        res.json(objInfo);
+    } catch (error) {
+        console.log(error.message);
+        res.json({error: true, message: error.message});
+    }
+}
+
+const cambiarPassword = async(req, res) =>{
+
+    // Destructuring
+    let {password, nuevoPassword, id} = req.body;
+
+    try {
+
+        let objInfo = {};
+
+        // Query
+        let usuario = await Usuario.findOne({ where: { id }});
+
+        // Si no encuentra el usuario
+        if(!usuario){
+            objInfo.message = 'No se ha encontrado el usuario';
+            objInfo.error = true;
+        }else{
+
+            let comprobar = await comprobarPassword(password, usuario['dataValues'].password);
+
+            if(comprobar){
+
+                // Configurando la fecha de actualizacion
+                let updatedAt = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`;
+                console.log('Fecha de actualizacion')
+                console.log(updatedAt)
+
+                // Hasheando la contraseña
+                let passwordHash = await hashearPassword(nuevoPassword, undefined);
+
+                console.log('Contraseña Hasheada');
+                console.log(nuevoPassword);
+                console.log(passwordHash)
+    
+                // Actualizando la contraseña
+                // await usuario.update({passwordHash, updatedAt});
+    
+                // Mensaje de Proceso Realizado con éxito
+                objInfo.message = 'Contraseña Actualizada Correctamente';
+                console.log('Contraseña actualizada correctamente');
+            }else{
+                objInfo.error = true;
+                objInfo.message = 'La contraseña Actual es incorrecta';
+            }
+        }
+
+        // Retornando al frontend
+        res.json(objInfo);
+    } catch (error) {
+        console.log(error.message)
+        res.json({message: error.message, error:true});
+    }
+}
+
+// ====== DELETE ====== 
+const borrarUsuario = async(req,res) =>{
+
+    // Destructuring
+    let {cedula, identificador_responsable} = req.body;
+    // let {id} = req.body;
+
+    console.log(req.body)
+
+    console.log(cedula);
+    console.log(identificador_responsable);
+
+    try {
+        // Variables y Promesas
+        let objInfo= {};                                                   // Objeto para la informacion a retornar
+        let usuario_asociado = await Usuario.findOne({ where:{ cedula }}); // Buscar al usuario para enviarlo a la notificacion
+        let resultado = await Usuario.destroy({ where:{ cedula } });       // query de eliminacion por la cedula
+
+        // Si el query fue hecho exitosamente
+        if(resultado == 1){
+            objInfo.message = "Usuario borrado exitosamente";           // Se crea el mensaje a retornar
+
+            crearNotificacion({ 
+                usuario: usuario_asociado['dataValues'].usuario , 
+                cedula: usuario_asociado['dataValues'].cedula ,
+                rol: usuario_asociado['dataValues'].rol
+            }, 
+            false, 
+            'eliminacion-usuario', 
+            identificador_responsable, 
+            null);
+        }else{
+            objInfo.error = true;                                       // Se crea el error
+            objInfo.message = "Hubo un error al eliminar al usuario";   // Se crea el mensaje de error
+        }
+
+        // Se retorna al frontend
+        res.json(objInfo);
+    } catch (error) {
+        // Se muestra el error y se retorna al frontend
+        console.log(error.message);
+        res.json({msg: error.message, error:true});
+    }
+}
+
+
 // Exportar Metodos
 export{
     unUsuario,
     registrarUsuario,
     obtenerUsuarios,
     cambiarPassword,
-    confirmarCuenta
+    confirmarCuenta,
+    actualizarUsuario,
+    borrarUsuario,
+    buscarPerfil,
+    resetearPassword,
 }

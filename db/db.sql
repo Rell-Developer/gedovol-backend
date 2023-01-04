@@ -53,5 +53,4 @@ create table `donantes`(
     `pregunta19` BOOLEAN, 
     `pregunta20` BOOLEAN, 
     `pregunta21` BOOLEAN 
-
 );

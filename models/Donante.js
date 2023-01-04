@@ -34,7 +34,7 @@ const Donante = conectarDB.define('donantes', {
     enfermedad:{
         type: DataTypes.STRING,
     },
-    estado: {
+    estatus: {
         type: DataTypes.BOOLEAN,
         default: false,
     },
@@ -122,6 +122,12 @@ const Donante = conectarDB.define('donantes', {
         type: DataTypes.BOOLEAN,
         default: false,
     },
+    createdAt:{
+        type:DataTypes.DATE,
+    },
+    updatedAt:{
+        type:DataTypes.DATE,
+    }
 });
 
 // Exportando el modelo

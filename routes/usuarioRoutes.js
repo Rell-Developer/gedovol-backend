@@ -7,7 +7,11 @@ import {
     registrarUsuario,
     obtenerUsuarios,
     cambiarPassword,
-    confirmarCuenta
+    confirmarCuenta,
+    actualizarUsuario,
+    borrarUsuario,
+    buscarPerfil,
+    resetearPassword,
 } from '../controllers/usuarioController.js';
 
 // Middlewares
@@ -18,13 +22,14 @@ const router = express.Router();
 
 // ============ Area Publica ============
 // ======== GET ========
-router.get('/confirmar-cuenta/:token', confirmarCuenta); //Confirmar Cuenta
+router.get('/confirmar-cuenta/:token', confirmarCuenta); // Confirmar Cuenta
+router.get('/buscar-perfil/:id', buscarPerfil);          // Buscar un perfil 
 
 // ======== POST ========
 router.post('/login', unUsuario); //Login
 
 // ======== PUT ========
-router.put('/cambiar-password', cambiarPassword); //Cambiar Contraseña para Confirmarla
+router.put('/resetear-password', resetearPassword);       // Resetear Contraseña para Confirmarla
 
 // ============ Area Privada ============
 // ======== GET ========
@@ -32,6 +37,13 @@ router.get('/obtener-usuarios', obtenerUsuarios);
 
 // ======== POST ========
 router.post('/registrar-usuario', registrarUsuario);
+
+// ======== PUT ========
+router.put('/actualizar-usuario', actualizarUsuario);   // Para Actualizar los datos del usuario
+router.put('/cambiar-password', cambiarPassword);       // Cambiar Contraseña
+
+// ======== DELETE ========
+router.post('/borrar-usuario', borrarUsuario);
 
 // Exportar enrutador
 export default router;
