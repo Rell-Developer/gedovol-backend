@@ -150,9 +150,9 @@ const registrarDonante = async(req, res) => {
 const modificarDonante = async(req, res) =>{
 
     // Destructuring
-    const {nombre,
+    let {nombre,
            apellido, 
-           cedula,
+           cedula = false,
            telefono,
            sexo,
            correo,
