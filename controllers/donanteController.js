@@ -23,7 +23,7 @@ const obtenerDonantes = async(req,res) =>{
         donantes.forEach(donante=> datos.push(donante['dataValues']));
 
         // Retorno al frontend de los datos de los donantes
-        res.json(datos);
+        res.json({datos, msg: "busqueda completada"});
         
     } catch (error) {
         // retornando el mensaje de error
