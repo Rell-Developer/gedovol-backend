@@ -1,6 +1,7 @@
 // Importar Archivos necesarios
 // Modelos
 import Donante from '../models/Donante.js';
+import Preguntas from '../models/Donante.js';
 
 // Helpers
 import generarID from '../helpers/generarID.js';
@@ -192,21 +193,24 @@ const modificarDonante = async(req, res) =>{
         // Query
         const donante = await Donante.findOne({ where: { cedula }});
 
+        const preguntas =  Preguntas;
+
         // Si no encuentra el donante
         if(!donante){
             objInfo.message = 'No se ha encontrado el donante';
             objInfo.error = true;
         }else{
 
-            // Actualizando la contraseña
+            // Actualizando los datos
             await donante.update({nombre,
                                   apellido, 
                                   cedula,
                                   telefono,
                                   sexo,
                                   correo,
-                                  direccion,
-                                  tipo_sangre,
+                                  direccion});
+                            
+            await preguntas.update({tipo_sangre,
                                   ultima_donacion,
                                   ultimo_tatuaje,
                                   enfermedad,
