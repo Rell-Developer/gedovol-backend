@@ -27,6 +27,11 @@ create table `donantes`(
     `sexo` BOOLEAN,
     `correo` VARCHAR(100),
     `direccion` LONGTEXT,
+);
+
+-- Creación de tabla con información de donantes
+create table preguntas(
+    `id` INT NOT NULL,
     `tipo_sangre` VARCHAR(3),
     `ultima_donacion` DATE,
     `ultimo_tatuaje` DATE,
@@ -53,7 +58,4 @@ create table `donantes`(
     `pregunta19` BOOLEAN, 
     `pregunta20` BOOLEAN, 
     `pregunta21` BOOLEAN,
-    `createdAt` DATE, 
-    `updatedAt` DATE
-
 );
