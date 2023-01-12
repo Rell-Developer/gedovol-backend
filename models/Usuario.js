@@ -28,9 +28,11 @@ const Usuario = conectarDB.define('usuarios', {
     },
     createdAt:{
         type: DataTypes.DATE,
+        default: new Date().toLocaleString(),
     },
     updatedAt: {
         type: DataTypes.DATE,
+        default: new Date().toLocaleString(),
     },
 });
 

@@ -22,6 +22,7 @@ const Notificacion = conectarDB.define('notificaciones',{
     },
     fecha: {
         type: DataTypes.DATE,
+        default: new Date().toLocaleString()
     },
     createdAt: {
         type: DataTypes.DATE,
