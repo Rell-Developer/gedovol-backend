@@ -37,7 +37,7 @@ const Preguntas = conectarDB.define('preguntas', {
     enfermedad:{
         type: DataTypes.STRING,
     },
-    estatus:{
+    estatus: {
         type: DataTypes.BOOLEAN,
         default: false,
     },
@@ -124,6 +124,12 @@ const Preguntas = conectarDB.define('preguntas', {
     pregunta21: {
         type: DataTypes.BOOLEAN,
         default: false,
+    },
+    createdAt:{
+        type:DataTypes.DATE,
+    },
+    updatedAt:{
+        type:DataTypes.DATE,
     }
 });
 
