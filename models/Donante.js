@@ -21,7 +21,10 @@ const Donante = conectarDB.define('donantes', {
     },
     direccion:{
         type: DataTypes.TEXT,
-    },
+    }
+});
+
+const Preguntas = conectarDB.define('preguntas', {
     tipo_sangre:{
         type: DataTypes.STRING,
     },
@@ -132,3 +135,5 @@ const Donante = conectarDB.define('donantes', {
 
 // Exportando el modelo
 export default Donante;
+export {Preguntas};
+
