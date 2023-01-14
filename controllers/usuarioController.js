@@ -592,7 +592,8 @@ const cambiarPassword = async(req, res) =>{
                 console.log(passwordHash)
     
                 // Actualizando la contraseña
-                // await usuario.update({passwordHash, updatedAt});
+                let actualizacion = await usuario.update({password: passwordHash, updatedAt});
+                console.log(actualizacion);
     
                 // Mensaje de Proceso Realizado con éxito
                 objInfo.message = 'Contraseña Actualizada Correctamente';
