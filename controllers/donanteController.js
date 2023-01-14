@@ -1,6 +1,7 @@
 // Importar Archivos necesarios
 // Modelos
 import Donante from '../models/Donante.js';
+import Preguntas from '../models/Donante.js';
 
 // Helpers
 import generarID from '../helpers/generarID.js';
@@ -23,13 +24,34 @@ const obtenerDonantes = async(req,res) =>{
         donantes.forEach(donante=> datos.push(donante['dataValues']));
 
         // Retorno al frontend de los datos de los donantes
-        res.json(datos);
+        res.json({datos, msg: "busqueda completada"});
         
     } catch (error) {
         // retornando el mensaje de error
         res.json({msg: error.message, error:true});
     }
     
+}
+
+// ====== GET ======
+//Eliminar un donante
+const eliminarDonante = async(req, res) => {
+    // Destructuring
+    const {id} = req.params;
+    
+    try{
+
+        //Query
+        Donante.destroy({ where: { id }});
+    
+        // Retorno al frontend de los datos de los donantes
+        res.json({msg: "eliminado"});
+    }catch (error) {
+        // retornando el mensaje de error
+        res.json({msg: error.message, error:true});
+    }
+    
+
 }
 
 // ====== POST ======
@@ -129,9 +151,9 @@ const registrarDonante = async(req, res) => {
 const modificarDonante = async(req, res) =>{
 
     // Destructuring
-    const {nombre,
+    let {nombre,
            apellido, 
-           cedula,
+           cedula = false,
            telefono,
            sexo,
            correo,
@@ -171,21 +193,24 @@ const modificarDonante = async(req, res) =>{
         // Query
         const donante = await Donante.findOne({ where: { cedula }});
 
+        const preguntas =  Preguntas;
+
         // Si no encuentra el donante
         if(!donante){
             objInfo.message = 'No se ha encontrado el donante';
             objInfo.error = true;
         }else{
 
-            // Actualizando la contraseña
+            // Actualizando los datos
             await donante.update({nombre,
                                   apellido, 
                                   cedula,
                                   telefono,
                                   sexo,
                                   correo,
-                                  direccion,
-                                  tipo_sangre,
+                                  direccion});
+                            
+            await preguntas.update({tipo_sangre,
                                   ultima_donacion,
                                   ultimo_tatuaje,
                                   enfermedad,
@@ -228,6 +253,7 @@ const modificarDonante = async(req, res) =>{
 // Exportar Metodos
 export{
     registrarDonante,
+    eliminarDonante,
     obtenerDonantes,
     modificarDonante
     
