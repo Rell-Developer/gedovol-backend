@@ -94,8 +94,7 @@ const registrarDonante = async(req, res) => {
         pregunta19,
         pregunta20,
         pregunta21,
-        createdAt,
-        updatedAt
+        
         } = req.body;
 
     try {
@@ -106,6 +105,7 @@ const registrarDonante = async(req, res) => {
 
         // Peticion a la base de datos para si la cedula ya está registrada
         let donantes = await Donante.findAll();
+        let preguntas = await Preguntas.findAll();
 
         // Busca si la cedula ya está registrada con otro donante
         donantes.forEach( donante => {
@@ -129,6 +129,7 @@ const registrarDonante = async(req, res) => {
             // Asignandole un identificador al usuario
             if(donantes.length > 0){
                 req.body.id = (donantes[donantes.length - 1]['dataValues'].id + 1);
+                req.body.id = (preguntas[preguntas.length - 1]['dataValues'].id + 1);
             }else{
                 req.body.id = 1;
             }
@@ -191,8 +192,6 @@ const modificarDonante = async(req, res) =>{
            pregunta19,
            pregunta20,
            pregunta21,
-           createdAt,
-           updatedAt
        } = req.body;
 
     try {
@@ -210,6 +209,11 @@ const modificarDonante = async(req, res) =>{
             objInfo.error = true;
         }else{
 
+            // Configurando la fecha de actualizacion
+            let updatedAt = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`;
+            console.log('Fecha de actualizacion')
+            console.log(updatedAt)
+            
             // Actualizando los datos
             await donante.update({nombre,
                                   apellido, 
@@ -217,7 +221,8 @@ const modificarDonante = async(req, res) =>{
                                   telefono,
                                   sexo,
                                   correo,
-                                  direccion});
+                                  direccion, 
+                                  updatedAt});
                             
             await preguntas.update({tipo_sangre,
                                   ultima_donacion,
@@ -247,10 +252,7 @@ const modificarDonante = async(req, res) =>{
                                   pregunta21});
 
 
-            // Configurando la fecha de actualizacion
-            let updatedAt = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`;
-            console.log('Fecha de actualizacion')
-            console.log(updatedAt)
+            
 
             // Mensaje de Proceso Realizado con éxito
             objInfo.message = 'Se han actualizado los datos correctamente';

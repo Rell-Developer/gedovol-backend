@@ -59,5 +59,5 @@ create table preguntas(
     `pregunta18` BOOLEAN, 
     `pregunta19` BOOLEAN, 
     `pregunta20` BOOLEAN, 
-    `pregunta21` BOOLEAN 
+    `pregunta21` BOOLEAN
 );
