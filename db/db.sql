@@ -26,7 +26,7 @@ create table `donantes`(
     `telefono` INT(12),
     `sexo` BOOLEAN,
     `correo` VARCHAR(100),
-    `direccion` LONGTEXT,
+    `direccion` LONGTEXT
 );
 
 -- Creación de tabla con información de donantes

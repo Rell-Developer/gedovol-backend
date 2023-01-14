@@ -1,7 +1,7 @@
 // Importar Archivos necesarios
 // Modelos
 import Donante from '../models/Donante.js';
-import Preguntas from '../models/Donante.js';
+import Preguntas from '../models/Preguntas.js';
 
 // Helpers
 import generarID from '../helpers/generarID.js';
@@ -151,9 +151,10 @@ const registrarDonante = async(req, res) => {
 const modificarDonante = async(req, res) =>{
 
     // Destructuring
-    let {nombre,
+    let {id = "",
+           nombre,
            apellido, 
-           cedula = false,
+           cedula,
            telefono,
            sexo,
            correo,
@@ -191,9 +192,9 @@ const modificarDonante = async(req, res) =>{
         let objInfo = {};
 
         // Query
-        const donante = await Donante.findOne({ where: { cedula }});
+        const donante = await Donante.findOne({ where: { id }});
 
-        const preguntas =  Preguntas;
+        const preguntas =  await Preguntas.findOne({ where: { id }});
 
         // Si no encuentra el donante
         if(!donante){

@@ -25,7 +25,7 @@ router.delete('/eliminar-donantes/:id', eliminarDonante);
 router.post('/registrar-donante', registrarDonante);
 
 // ======== PUT ========
-router.put('/modificar-donante', modificarDonante);
+router.put('/modificar-donante/:id', modificarDonante);
 
 // Exportar enrutador
 export default router;
