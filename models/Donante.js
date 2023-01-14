@@ -21,6 +21,14 @@ const Donante = conectarDB.define('donantes', {
     },
     direccion:{
         type: DataTypes.TEXT,
+    },
+    createdAt:{
+        type: DataTypes.DATE,
+        default: new Date().toLocaleString(),
+    },
+    updatedAt: {
+        type: DataTypes.DATE,
+        default: new Date().toLocaleString(),
     }
 });
 

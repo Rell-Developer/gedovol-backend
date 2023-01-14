@@ -94,6 +94,8 @@ const registrarDonante = async(req, res) => {
         pregunta19,
         pregunta20,
         pregunta21,
+        createdAt,
+        updatedAt
         } = req.body;
 
     try {
@@ -130,7 +132,11 @@ const registrarDonante = async(req, res) => {
             }else{
                 req.body.id = 1;
             }
-
+            
+            // Colocando la hora de creacion y actualizacion
+            req.body.createdAt = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`;
+            req.body.updatedAt = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`;
+            
             // Creando mensaje que se retornará
             dataObj.message = 'Donante creado correctamente.';
         }else{
@@ -184,7 +190,9 @@ const modificarDonante = async(req, res) =>{
            pregunta18,
            pregunta19,
            pregunta20,
-           pregunta21
+           pregunta21,
+           createdAt,
+           updatedAt
        } = req.body;
 
     try {
@@ -237,6 +245,12 @@ const modificarDonante = async(req, res) =>{
                                   pregunta19,
                                   pregunta20,
                                   pregunta21});
+
+
+            // Configurando la fecha de actualizacion
+            let updatedAt = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`;
+            console.log('Fecha de actualizacion')
+            console.log(updatedAt)
 
             // Mensaje de Proceso Realizado con éxito
             objInfo.message = 'Se han actualizado los datos correctamente';
