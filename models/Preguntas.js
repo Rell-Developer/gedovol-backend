@@ -103,6 +103,7 @@ const Preguntas = conectarDB.define('preguntas', {
         type: DataTypes.BOOLEAN,
         default: false,
     }
+    
 });
 
 // Exportando el modelo

@@ -33,7 +33,7 @@ const obtenerDonantes = async(req,res) =>{
     
 }
 
-// ====== GET ======
+// ====== DELETE ======
 //Eliminar un donante
 const eliminarDonante = async(req, res) => {
     // Destructuring
@@ -94,7 +94,8 @@ const registrarDonante = async(req, res) => {
         pregunta19,
         pregunta20,
         pregunta21,
-        
+        createdAt,
+        updatedAt
         } = req.body;
 
     try {
@@ -138,6 +139,16 @@ const registrarDonante = async(req, res) => {
             req.body.createdAt = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`;
             req.body.updatedAt = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`;
             
+            donantes = await Donante.update({
+                createdAt,
+                updatedAt
+            })
+
+            preguntas = await Preguntas.update({
+                createdAt,
+                updatedAt
+            });
+
             // Creando mensaje que se retornará
             dataObj.message = 'Donante creado correctamente.';
         }else{
