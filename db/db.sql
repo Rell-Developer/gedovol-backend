@@ -30,13 +30,13 @@ create table `donantes`(
 );
 
 -- Creación de tabla con información de donantes
-create table preguntas(
-    `id` INT NOT NULL,
-    `tipo_sangre` VARCHAR(3),
-    `ultima_donacion` DATE,
-    `ultimo_tatuaje` DATE,
+create table `formularios`(
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `ultima_donacion` VARCHAR(100),
+    `ultimo_tatuaje` VARCHAR(100),
     `enfermedad` VARCHAR(150),
     `estatus` BOOLEAN,
+    `fechaDonacion` DATE,
     `pregunta1` BOOLEAN, 
     `pregunta2` BOOLEAN, 
     `pregunta3` BOOLEAN, 
@@ -57,5 +57,9 @@ create table preguntas(
     `pregunta18` BOOLEAN, 
     `pregunta19` BOOLEAN, 
     `pregunta20` BOOLEAN, 
-    `pregunta21` BOOLEAN 
+    `pregunta21` BOOLEAN,
+    `donante_id` INT,
+    `createdAt` DATE,
+    `updatedAt` DATE,
+    PRIMARY KEY(`id`)
 );

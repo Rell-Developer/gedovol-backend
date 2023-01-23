@@ -9,6 +9,7 @@ import conectarDB from "./config/db.js";
 // Routes
 import usuarioRoutes from './routes/usuarioRoutes.js';
 import donanteRoutes from './routes/donanteRoutes.js';
+import formularioRoutes from './routes/formularioRoutes.js';
 import notificacionRoutes from './routes/notificacionRoutes.js';
 
 // Instancia de Express
@@ -23,17 +24,10 @@ app.use(express.json());
 // Uso de los cors
 app.use(cors());
 
-// Uso del routing principal
-// app.use('/', (req, res) =>{
-//     res.json({
-//         titulo: "Este es el titulo",
-//         mensaje: "mensaje"
-//     });
-// })
-
 // Uso del Enrutado
 app.use('/api/usuario', usuarioRoutes);
 app.use('/api/donante', donanteRoutes);
+app.use('/api/formulario', formularioRoutes);
 app.use('/api/notificacion', notificacionRoutes);
 
 // Verificacion si se conecto con la base de datos
