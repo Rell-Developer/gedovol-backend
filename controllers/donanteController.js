@@ -1,7 +1,7 @@
 // Importar Archivos necesarios
 // Modelos
 import Donante from '../models/Donante.js';
-import Preguntas from '../models/Donante.js';
+import Preguntas from '../models/Preguntas.js';
 
 // Helpers
 import generarID from '../helpers/generarID.js';
@@ -33,7 +33,7 @@ const obtenerDonantes = async(req,res) =>{
     
 }
 
-// ====== GET ======
+// ====== DELETE ======
 //Eliminar un donante
 const eliminarDonante = async(req, res) => {
     // Destructuring
@@ -94,6 +94,8 @@ const registrarDonante = async(req, res) => {
         pregunta19,
         pregunta20,
         pregunta21,
+        createdAt,
+        updatedAt
         } = req.body;
 
     try {
@@ -104,6 +106,7 @@ const registrarDonante = async(req, res) => {
 
         // Peticion a la base de datos para si la cedula ya está registrada
         let donantes = await Donante.findAll();
+        let preguntas = await Preguntas.findAll();
 
         // Busca si la cedula ya está registrada con otro donante
         donantes.forEach( donante => {
@@ -127,9 +130,24 @@ const registrarDonante = async(req, res) => {
             // Asignandole un identificador al usuario
             if(donantes.length > 0){
                 req.body.id = (donantes[donantes.length - 1]['dataValues'].id + 1);
+                req.body.id = (preguntas[preguntas.length - 1]['dataValues'].id + 1);
             }else{
                 req.body.id = 1;
             }
+            
+            // Colocando la hora de creacion y actualizacion
+            req.body.createdAt = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`;
+            req.body.updatedAt = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`;
+            
+            donantes = await Donante.update({
+                createdAt,
+                updatedAt
+            })
+
+            preguntas = await Preguntas.update({
+                createdAt,
+                updatedAt
+            });
 
             // Creando mensaje que se retornará
             dataObj.message = 'Donante creado correctamente.';
@@ -151,9 +169,10 @@ const registrarDonante = async(req, res) => {
 const modificarDonante = async(req, res) =>{
 
     // Destructuring
-    let {nombre,
+    let {id = "",
+           nombre,
            apellido, 
-           cedula = false,
+           cedula,
            telefono,
            sexo,
            correo,
@@ -183,7 +202,7 @@ const modificarDonante = async(req, res) =>{
            pregunta18,
            pregunta19,
            pregunta20,
-           pregunta21
+           pregunta21,
        } = req.body;
 
     try {
@@ -191,9 +210,9 @@ const modificarDonante = async(req, res) =>{
         let objInfo = {};
 
         // Query
-        const donante = await Donante.findOne({ where: { cedula }});
+        const donante = await Donante.findOne({ where: { id }});
 
-        const preguntas =  Preguntas;
+        const preguntas =  await Preguntas.findOne({ where: { id }});
 
         // Si no encuentra el donante
         if(!donante){
@@ -201,6 +220,11 @@ const modificarDonante = async(req, res) =>{
             objInfo.error = true;
         }else{
 
+            // Configurando la fecha de actualizacion
+            let updatedAt = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`;
+            console.log('Fecha de actualizacion')
+            console.log(updatedAt)
+            
             // Actualizando los datos
             await donante.update({nombre,
                                   apellido, 
@@ -208,7 +232,8 @@ const modificarDonante = async(req, res) =>{
                                   telefono,
                                   sexo,
                                   correo,
-                                  direccion});
+                                  direccion, 
+                                  updatedAt});
                             
             await preguntas.update({tipo_sangre,
                                   ultima_donacion,
@@ -236,6 +261,9 @@ const modificarDonante = async(req, res) =>{
                                   pregunta19,
                                   pregunta20,
                                   pregunta21});
+
+
+            
 
             // Mensaje de Proceso Realizado con éxito
             objInfo.message = 'Se han actualizado los datos correctamente';
