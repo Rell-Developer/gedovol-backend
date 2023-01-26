@@ -10,6 +10,8 @@ const obtenerFormularios = async(req,res) =>{
         // Busqueda de todos los formularios
         let formularios = await Formulario.findAll({});
 
+        console.log('=======obteniendo todos los formularios=======')
+
         // Retorno de los formularios
         res.json(formularios);
     }catch(error){
@@ -98,12 +100,28 @@ const actualizarFormulario = async(req,res) =>{
 // Eliminar un formulario
 const eliminarFormulario = async(req,res) =>{
 
-    console.log('registrarFormulario');
+    console.log('eliminar formularioo');
+    // Obteniendo los parametros del endpoint
+    const {id} = req.params;
 
     try{
+        // Objeto a Retornar al frontend
         let objInfo = {};
 
+        // Query
+        let resultado = await Formulario.destroy({ where:{ id }})
 
+        // Si el eliminado es exitoso
+        if(resultado){
+            // Se crea un mensaje para notificar la accion
+            objInfo.message = 'Formulario eliminado exitosamente';
+        }else{
+            // Si no, se crea un mensaje de error
+            objInfo.message = 'Hubo un problema al eliminar el formulario';
+            objInfo.error = true;
+        }
+
+        // El retorno del objeto con la informacion
         res.json(objInfo);
     }catch(error){
         console.log('Hubo un error en la operacion');
