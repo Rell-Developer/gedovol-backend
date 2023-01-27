@@ -25,10 +25,22 @@ const obtenerFormularios = async(req,res) =>{
 const obtenerFormularioPorID = async(req,res) =>{
 
     console.log('obtener formulario por ID');
+    const { id } = req.params;
+    console.log(id);
 
     try{
         let objInfo = {};
 
+        let Busqueda = await Formulario.findOne({ where: { id }});
+
+        if(Busqueda){
+            console.log('se consiguio el formulario')
+            console.log(Busqueda['dataValues']);
+            objInfo = Busqueda['dataValues'];
+        }else{
+            objInfo.error = true;
+            objInfo.message = 'No se encontró un formulario asociado a ese identificador';
+        }
 
         res.json(objInfo);
     }catch(error){
