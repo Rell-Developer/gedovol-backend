@@ -16,15 +16,18 @@ const obtenerDonantes = async(req,res) =>{
         
         // Busqueda de todos los donantes
         let donantes = await Donante.findAll();
+        let preguntas = await Preguntas.findAll();
 
         // Array con todos los datos de los donantes
-        let datos = [];
+        let datos_donantes = [];
+        let pregunta_donantes = [];
 
         // Recorrido para llenar el array de los datos de los clientes
-        donantes.forEach(donante=> datos.push(donante['dataValues']));
+        donantes.forEach(donante=> datos_donantes.push(donante['dataValues']));
+        preguntas.forEach(preguntas=> pregunta_donantes.push(preguntas['dataValues']));
 
         // Retorno al frontend de los datos de los donantes
-        res.json({datos, msg: "busqueda completada"});
+        res.json({datos_donantes, pregunta_donantes, msg: "busqueda completada"});
         
     } catch (error) {
         // retornando el mensaje de error
@@ -38,11 +41,14 @@ const obtenerDonantes = async(req,res) =>{
 const eliminarDonante = async(req, res) => {
     // Destructuring
     const {id} = req.params;
+    let donante_id = id;
     
     try{
 
         //Query
         Donante.destroy({ where: { id }});
+        Preguntas.destroy({ where: {donante_id}});
+        
     
         // Retorno al frontend de los datos de los donantes
         res.json({msg: "eliminado"});
@@ -64,38 +70,37 @@ const registrarDonante = async(req, res) => {
     let {nombre,
          apellido, 
          cedula,
-         telefono,
+         telefono_1,
+         telefono_2,
          sexo,
          correo,
          direccion,
          tipo_sangre,
          ultima_donacion,
          ultimo_tatuaje,
-        enfermedad,
-        estatus,
-        pregunta1,
-        pregunta2,
-        pregunta3,
-        pregunta4,
-        pregunta5,
-        pregunta6,
-        pregunta7,
-        pregunta8,
-        pregunta9,
-        pregunta10,
-        pregunta11,
-        pregunta12,
-        pregunta13,
-        pregunta14,
-        pregunta15,
-        pregunta16,
-        pregunta17,
-        pregunta18,
-        pregunta19,
-        pregunta20,
-        pregunta21,
-        createdAt,
-        updatedAt
+         enfermedad,
+         estatus,
+         pregunta1,
+         pregunta2,
+         pregunta3,
+         pregunta4,
+         pregunta5,
+         pregunta6,
+         pregunta7,
+         pregunta8,
+         pregunta9,
+         pregunta10,
+         pregunta11,
+         pregunta12,
+         pregunta13,
+         pregunta14,
+         pregunta15,
+         pregunta16,
+         pregunta17,
+         pregunta18,
+         pregunta19,
+         pregunta20,
+         pregunta21
         } = req.body;
 
     try {
@@ -119,7 +124,11 @@ const registrarDonante = async(req, res) => {
                 donanteEncontrado = true;
                 dataObj.message = 'Este correo electronico ya está registrado con un donante';
             }
-            if(donante['dataValues'].telefono === telefono){
+            if(donante['dataValues'].telefono_1 === telefono_1){
+                donanteEncontrado = true;
+                dataObj.message = 'Este numero de telefono ya está registrado con un donante';
+            }
+            if(donante['dataValues'].telefono_2 === telefono_2){
                 donanteEncontrado = true;
                 dataObj.message = 'Este numero de telefono ya está registrado con un donante';
             }
@@ -137,16 +146,48 @@ const registrarDonante = async(req, res) => {
             
             // Colocando la hora de creacion y actualizacion
             req.body.createdAt = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`;
-            req.body.updatedAt = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`;
             
-            donantes = await Donante.update({
-                createdAt,
-                updatedAt
+            donantes = await Donante.create({
+                id: req.body.id,
+                nombre,
+                apellido, 
+                cedula,
+                telefono_1,
+                telefono_2,
+                sexo,
+                correo,
+                direccion
             })
 
-            preguntas = await Preguntas.update({
-                createdAt,
-                updatedAt
+            preguntas = await Preguntas.create({
+                id: req.body.id,
+                tipo_sangre,
+                ultima_donacion,
+                ultimo_tatuaje,
+                enfermedad,
+                estatus,
+                pregunta1,
+                pregunta2,
+                pregunta3,
+                pregunta4,
+                pregunta5,
+                pregunta6,
+                pregunta7,
+                pregunta8,
+                pregunta9,
+                pregunta10,
+                pregunta11,
+                pregunta12,
+                pregunta13,
+                pregunta14,
+                pregunta15,
+                pregunta16,
+                pregunta17,
+                pregunta18,
+                pregunta19,
+                pregunta20,
+                pregunta21,
+                donante_id: req.body.id
             });
 
             // Creando mensaje que se retornará
@@ -169,11 +210,11 @@ const registrarDonante = async(req, res) => {
 const modificarDonante = async(req, res) =>{
 
     // Destructuring
-    let {id = "",
-           nombre,
+    let {  nombre,
            apellido, 
            cedula,
-           telefono,
+           telefono_1,
+           telefono_2,
            sexo,
            correo,
            direccion,
@@ -205,6 +246,10 @@ const modificarDonante = async(req, res) =>{
            pregunta21,
        } = req.body;
 
+       const {id} = req.params;
+       
+       let donante_id = id;
+
     try {
 
         let objInfo = {};
@@ -212,7 +257,7 @@ const modificarDonante = async(req, res) =>{
         // Query
         const donante = await Donante.findOne({ where: { id }});
 
-        const preguntas =  await Preguntas.findOne({ where: { id }});
+        const preguntas =  await Preguntas.findOne({ where: { donante_id }});
 
         // Si no encuentra el donante
         if(!donante){
@@ -229,7 +274,8 @@ const modificarDonante = async(req, res) =>{
             await donante.update({nombre,
                                   apellido, 
                                   cedula,
-                                  telefono,
+                                  telefono_1,
+                                  telefono_2,
                                   sexo,
                                   correo,
                                   direccion, 
@@ -260,7 +306,8 @@ const modificarDonante = async(req, res) =>{
                                   pregunta18,
                                   pregunta19,
                                   pregunta20,
-                                  pregunta21});
+                                  pregunta21,
+                                  updatedAt});
 
 
             
