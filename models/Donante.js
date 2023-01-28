@@ -13,7 +13,10 @@ const Donante = conectarDB.define('donantes', {
     cedula:{
         type: DataTypes.STRING,
     },
-    telefono:{
+    telefono_1:{
+        type: DataTypes.STRING,
+    },
+    telefono_2:{
         type: DataTypes.STRING,
     },
     correo:{

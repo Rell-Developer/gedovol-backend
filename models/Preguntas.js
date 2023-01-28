@@ -102,6 +102,18 @@ const Preguntas = conectarDB.define('preguntas', {
     pregunta21: {
         type: DataTypes.BOOLEAN,
         default: false,
+    },
+    donante_id:{
+        type: DataTypes.NUMBER,
+        default:false,
+    },
+    createdAt:{
+        type: DataTypes.DATE,
+        default: new Date().toLocaleString(),
+    },
+    updatedAt: {
+        type: DataTypes.DATE,
+        default: new Date().toLocaleString(),
     }
     
 });
