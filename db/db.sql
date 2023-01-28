@@ -23,7 +23,8 @@ create table `donantes`(
     `nombre` VARCHAR(100),
     `apellido` VARCHAR(100),
     `cedula` VARCHAR(150),
-    `telefono` INT(12),
+    `telefono_1` INT(12),
+    `telefono_2` INT(12),
     `sexo` BOOLEAN,
     `correo` VARCHAR(100),
     `direccion` LONGTEXT,
@@ -60,5 +61,7 @@ create table preguntas(
     `pregunta19` BOOLEAN, 
     `pregunta20` BOOLEAN, 
     `pregunta21` BOOLEAN,
-    `donante_id` INT NOT NULL
+    `donante_id` INT NOT NULL,
+    `createdAt` DATE, 
+    `updatedAt` DATE
 );
