@@ -19,7 +19,7 @@ const router = express.Router();
 router.get('/obtener-donantes', obtenerDonantes);
 
 // ======== DELETE ========
-router.delete('/eliminar-donantes/:id', eliminarDonante);
+router.delete('/eliminar-donante/:id', eliminarDonante);
 
 // ======== POST ========
 router.post('/registrar-donante', registrarDonante);
