@@ -13,6 +13,9 @@ const Donante = conectarDB.define('donantes', {
     cedula:{
         type: DataTypes.STRING,
     },
+    tipo_sangre:{
+        type: DataTypes.STRING,
+    },
     telefono_1:{
         type: DataTypes.STRING,
     },

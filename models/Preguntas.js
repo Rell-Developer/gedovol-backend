@@ -3,9 +3,6 @@ import { DataTypes } from "sequelize";
 import generarID from '../helpers/generarID.js';
 
 const Preguntas = conectarDB.define('preguntas', {
-    tipo_sangre:{
-        type: DataTypes.STRING,
-    },
     ultima_donacion:{
         type: DataTypes.DATE,
     },

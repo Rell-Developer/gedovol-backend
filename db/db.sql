@@ -23,6 +23,7 @@ create table `donantes`(
     `nombre` VARCHAR(100),
     `apellido` VARCHAR(100),
     `cedula` VARCHAR(150),
+    `tipo_sangre` VARCHAR(3),
     `telefono_1` INT(12),
     `telefono_2` INT(12),
     `sexo` BOOLEAN,
@@ -35,7 +36,6 @@ create table `donantes`(
 -- Creación de tabla con información de donantes
 create table preguntas(
     `id` INT NOT NULL,
-    `tipo_sangre` VARCHAR(3),
     `ultima_donacion` DATE,
     `ultimo_tatuaje` DATE,
     `enfermedad` VARCHAR(150),
