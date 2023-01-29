@@ -45,13 +45,22 @@ const eliminarDonante = async(req, res) => {
     
     try{
 
-        //Query
-        Donante.destroy({ where: { id }});
-        Preguntas.destroy({ where: {donante_id}});
-        
-    
-        // Retorno al frontend de los datos de los donantes
-        res.json({msg: "eliminado"});
+        const donante = await Donante.findOne({ where: { id }});
+
+        if(!donante){
+
+            res.json({msg: 'No se ha encontrado el donante', error:true});
+
+        }else{
+
+            //Query
+            Donante.destroy({ where: { id }});
+            Preguntas.destroy({ where: {donante_id}});
+            
+            // Retorno al frontend de los datos de los donantes
+            res.json({msg: "eliminado"});
+        }
+
     }catch (error) {
         // retornando el mensaje de error
         res.json({msg: error.message, error:true});
