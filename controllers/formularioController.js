@@ -1,6 +1,7 @@
 // Importar el modelo
 import Formulario from "../models/Formulario.js";
 import Donante from "../models/Donante.js";
+import enviarCorreo from "../helpers/enviarCorreo.js";
 
 // Funciones CRUD
 // ========= GET ==========
@@ -79,7 +80,14 @@ const registrarFormulario = async(req,res) =>{
         console.log(objDatos);
         console.log('guardando datos');
         let guardado = await Formulario.create(objDatos);
+
         console.log(guardado);
+        if(guardado){
+            objInfo = {message: 'El formulario ha sido guardado exitosamente'};
+            await enviarCorreo({email:'roquel@gmail.com', nombre: 'Roque Emilio Lopez Loreto'}, 'Formulario Registrado', 'Su formulario ha sido guardado correctamente');
+        }else{
+            objInfo = {message: "Hubo un error al guardar el formulario",error:true};
+        }
 
 
         console.log(objInfo.length);
@@ -96,11 +104,55 @@ const registrarFormulario = async(req,res) =>{
 // Actualizar un formulario
 const actualizarFormulario = async(req,res) =>{
 
-    console.log('registrarFormulario');
+    const {donante_id} = req.body;
+    console.log('actualizando formulario');
+    console.log(req.body);
 
     try{
-        let objInfo = {};
 
+        let busqueda = await Formulario.findOne({where: {donante_id}});
+        let objInfo = {};
+        console.log('Este es el resultado de la busqueda')
+        console.log(busqueda)
+
+        if(busqueda){
+
+            let objDatos = {};
+            let i = 1;
+    
+            objInfo = Object.values(req.body);
+            objInfo.forEach((element, index)=>{
+                if(index > 4){
+                    objDatos[`pregunta${i}`] = element;
+                    i += 1;
+                }
+            });
+    
+            objDatos.ultima_donacion = req.body.fechaDonadoUltimamente;
+            objDatos.ultimo_tatuaje = req.body.fechaTatuadoUltimamente;
+            objDatos.enfermedad = req.body.enfermedadVenerea;
+            objDatos.estatus = req.body.estatus;
+            objDatos.donante_id = parseInt(req.body.donante_id);
+            objDatos.fechaDonacion = req.body.fechaDonacion;
+    
+            console.log(objDatos);
+            console.log('guardando datos');
+
+            // Actualizacion de los datos del formulario
+            let actualizacion = await busqueda.update(objDatos);
+
+            console.log(actualizacion)
+
+            if(actualizacion){
+                objInfo= {message:"Formulario actualizado correctamente"};
+            }else{
+                objInfo= {message:"Hubo un error al actualizar el formulario", error:true};
+            }
+
+        }else{
+            objInfo.message = "No se ha encontrado este formulario en la base de datos";
+            objInfo.error = true;
+        }
 
         res.json(objInfo);
     }catch(error){
