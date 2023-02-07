@@ -7,11 +7,11 @@ import Usuario from '../models/Usuario.js';
 import Notificacion from '../models/Notificacion.js';
 
 // Helpers
-import generarID from '../helpers/generarID.js';
-import generarJWT from '../helpers/generarJWT.js';
-import { hashearPassword, comprobarPassword } from '../helpers/hashearPasswords.js';
-import enviarCorreo from '../helpers/enviarCorreo.js';
-import recuperarCuenta from '../helpers/recuperarCuenta.js';
+import generarID from '../helpers/generators/generarID.js';
+import generarJWT from '../helpers/generators/generarJWT.js';
+import { hashearPassword, comprobarPassword } from '../helpers/hashers/hashearPasswords.js';
+import enviarCorreo from '../helpers/emails/enviarCorreo.js';
+import recuperarCuenta from '../helpers/emails/recuperarCuenta.js';
 
 // ====== Metodos del CRUD ======
 // ====== GET ======

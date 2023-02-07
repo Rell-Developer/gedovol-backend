@@ -4,7 +4,7 @@ import Donante from '../models/Donante.js';
 import Preguntas from '../models/Donante.js';
 
 // Helpers
-import generarID from '../helpers/generarID.js';
+import generarID from '../helpers/generators/generarID.js';
 //import enviarCorreo from '../helpers/enviarCorreo.js';
 
 // ====== Metodos del CRUD ======

@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
-import FormRegistered from './emails/templates/FormRegistered.js';
-import UserRegistered from './emails/templates/UserRegistered.js';
+import FormRegistered from './FormRegistered.js';
+import UserRegistered from './UserRegistered.js';
 
 const enviarCorreo = async (datos, subject = 'Creacion de Cuenta', text = 'Confirma tu Cuenta') => {
 

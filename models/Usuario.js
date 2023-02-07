@@ -1,6 +1,6 @@
 import conectarDB from "../config/db.js";
 import { DataTypes } from "sequelize";
-import generarID from '../helpers/generarID.js';
+// import generarID from '../helpers/generators/generarID.js';
 
 // Declaracion del modelo
 const Usuario = conectarDB.define('usuarios', {

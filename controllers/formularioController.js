@@ -1,7 +1,7 @@
 // Importar el modelo
 import Formulario from "../models/Formulario.js";
 import Donante from "../models/Donante.js";
-import enviarCorreo from "../helpers/enviarCorreo.js";
+import enviarCorreo from "../helpers/emails/enviarCorreo.js";
 
 // Funciones CRUD
 // ========= GET ==========
@@ -10,6 +10,16 @@ const obtenerFormularios = async(req,res) =>{
     try{
         // Busqueda de todos los formularios
         let formularios = await Formulario.findAll({});
+
+        for(let i = 0; i < formularios.length; i++){
+            console.log(formularios[i]['dataValues'].donante_id)
+            let busquedaDonante = await Donante.findOne({ where: { cedula: formularios[i]['dataValues'].donante_id}});
+
+            if(busquedaDonante !== null){
+                formularios[i]['dataValues'].nombre = busquedaDonante.dataValues.nombre;
+                formularios[i]['dataValues'].apellido = busquedaDonante.dataValues.apellido;
+            }
+        }
 
         console.log('=======obteniendo todos los formularios=======')
 
@@ -33,11 +43,16 @@ const obtenerFormularioPorID = async(req,res) =>{
         let objInfo = {};
 
         let Busqueda = await Formulario.findOne({ where: { id }});
-
+        
         if(Busqueda){
-            console.log('se consiguio el formulario')
-            console.log(Busqueda['dataValues']);
+            let busquedaDonante = await Donante.findOne({ where: { cedula: Busqueda["dataValues"].donante_id}});
+
+            console.log('se consiguio el formulario');
+            console.log(busquedaDonante)
+            
             objInfo = Busqueda['dataValues'];
+            objInfo.nombre = busquedaDonante['dataValues'].nombre;
+            objInfo.apellido = busquedaDonante['dataValues'].apellido;
         }else{
             objInfo.error = true;
             objInfo.message = 'No se encontró un formulario asociado a ese identificador';
@@ -74,7 +89,7 @@ const registrarFormulario = async(req,res) =>{
         objDatos.ultimo_tatuaje = req.body.fechaTatuadoUltimamente;
         objDatos.enfermedad = req.body.enfermedadVenerea;
         objDatos.estatus = req.body.estatus;
-        objDatos.donante_id = parseInt(req.body.donante);
+        objDatos.donante_id = parseInt(req.body.donante_id);
         objDatos.fechaDonacion = req.body.fechaDonacion;
 
         console.log(objDatos);

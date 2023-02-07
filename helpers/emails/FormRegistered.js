@@ -1,5 +1,5 @@
 // Importaciones de otros componentes para el email
-import HeaderEmail from "./HeaderEmail.js";
+import HeaderEmail from "./templates/HeaderEmail.js";
 
 const FormRegistered = (datos) => {
 

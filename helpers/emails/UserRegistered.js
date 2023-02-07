@@ -1,5 +1,5 @@
 // Importaciones
-import HeaderEmail from "./HeaderEmail.js";
+import HeaderEmail from "./templates/HeaderEmail.js";
 
 // Mensaje
 const UserRegistered = (datos) => {
