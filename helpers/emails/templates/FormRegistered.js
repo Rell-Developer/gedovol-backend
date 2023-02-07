@@ -10,8 +10,17 @@ const FormRegistered = (datos) => {
     return (
         `
         ${HeaderEmail()}
+        <style>
+            section{
+                width:100%;
+                text-align: center;
+            }
+            section p span{
+                font-weight: bold;
+            }
+        </style>
         <section>
-            <p>Hola: ${nombre}, tu formulario ha sido creado éxitosamente.</p>
+            <p>Hola: <span>${nombre}</span>, su formulario ha sido registrado éxitosamente en el sistema.</p>
         </section>`
     )
 }
